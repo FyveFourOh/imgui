@@ -6,7 +6,7 @@ project "ImGui"
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
     includedirs {
-        "C:/VulkanSDK/1.3.250.0/Include"
+        "../VulkanSDK/1.3.268.0/Include"
     }
 
     files 
@@ -16,6 +16,7 @@ project "ImGui"
         "imgui.cpp",
         "imgui_draw.cpp",
         "imgui_internal.h",
+        "imgui_tables.cpp",
         "imgui_widgets.cpp",
         "imstb_rectpack.h",
         "imstb_textedit.h",
@@ -36,3 +37,6 @@ project "ImGui"
 
     filter {"system:windows", "configurations:Release"}
         buildoptions "/MD"
+        
+        staticruntime "off"
+        runtime "Release"
