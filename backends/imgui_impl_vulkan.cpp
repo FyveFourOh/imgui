@@ -87,7 +87,7 @@
 //  2016-10-18: Vulkan: Add location decorators & change to use structs as in/out in glsl, update embedded spv (produced with glslangValidator -x). Null the released resources.
 //  2016-08-27: Vulkan: Fix Vulkan example for use when a depth buffer is active.
 
-#include "imgui.h"
+#include "../imgui.h"
 #ifndef IMGUI_DISABLE
 #include "imgui_impl_vulkan.h"
 #include <stdio.h>
@@ -358,8 +358,8 @@ static uint32_t __glsl_shader_vert_spv[] =
     0x0000002b,0x00000027,0x00000001,0x00070050,0x00000007,0x0000002c,0x0000002a,0x0000002b,
     0x00000028,0x00000029,0x00050041,0x00000011,0x0000002d,0x0000001b,0x0000000d,0x0003003e,
     0x0000002d,0x0000002c,0x000100fd,0x00010038
-};
-*/
+};*/
+
 
 /* LAST LINEAR CONVERSION SHADER
 static uint32_t __glsl_shader_vert_spv[] =
@@ -416,6 +416,7 @@ static uint32_t __glsl_shader_vert_spv[] =
     0x0000003b,0x0000003a,0x000100fd,0x00010038
 };*/
 
+ // Second linear conversion test
 static uint32_t __glsl_shader_vert_spv[] =
 {
     0x07230203,0x00010000,0x0008000b,0x00000061,0x00000000,0x00020011,0x00000001,0x0006000b,
@@ -494,6 +495,7 @@ static uint32_t __glsl_shader_vert_spv[] =
     0x0000002d,0x00000002,0x00070050,0x00000007,0x00000036,0x00000033,0x00000034,0x00000035,
     0x00000032,0x000200fe,0x00000036,0x00010038
 };
+
 
 // backends/vulkan/glsl_shader.frag, compiled with:
 // # glslangValidator -V -x -o glsl_shader.frag.u32 glsl_shader.frag
@@ -856,7 +858,7 @@ bool ImGui_ImplVulkan_CreateFontsTexture()
         VkImageCreateInfo info = {};
         info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         info.imageType = VK_IMAGE_TYPE_2D;
-        info.format = VK_FORMAT_R8G8B8A8_UNORM; // NOTE/TODO:
+        info.format = VK_FORMAT_R8G8B8A8_SRGB; // NOTE/TODO:
         info.extent.width = width;
         info.extent.height = height;
         info.extent.depth = 1;
@@ -887,7 +889,7 @@ bool ImGui_ImplVulkan_CreateFontsTexture()
         info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         info.image = backend_tex->Image;
         info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        info.format = VK_FORMAT_R8G8B8A8_UNORM;
+        info.format = VK_FORMAT_R8G8B8A8_SRGB;
         info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         info.subresourceRange.levelCount = 1;
         info.subresourceRange.layerCount = 1;
@@ -1922,9 +1924,9 @@ static void ImGui_ImplVulkan_CreateWindow(ImGuiViewport* viewport)
     }
 
     // Select Surface Format
-    const VkFormat requestSurfaceImageFormat[] = { VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM };
+    const VkFormat requestSurfaceImageFormat[] = { VK_FORMAT_B8G8R8A8_SRGB, VK_FORMAT_R8G8B8A8_SRGB, VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM };
     const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-    wd->SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(v->PhysicalDevice, wd->Surface, requestSurfaceImageFormats.Data, (size_t)requestSurfaceImageFormats.Size, requestSurfaceColorSpace);
+    wd->SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(v->PhysicalDevice, wd->Surface, requestSurfaceImageFormat, 4, requestSurfaceColorSpace); // TODO/NOTE: was requestSurfaceImageFormats.Data and (size_t)requestSurfaceImageFormats.Size
 
     // Select Present Mode
     // FIXME-VULKAN: Even thought mailbox seems to get us maximum framerate with a single window, it halves framerate with a second window etc. (w/ Nvidia and SDK 1.82.1)
